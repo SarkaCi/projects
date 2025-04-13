@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<title>Pojištění App</title>-->
+
+    <!-- Bootstrap (WebJar) -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+    <!-- Vlastní CSS styl -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<!-- Pozadí -->
+<div class="background-image">
+    <div class="overlay">
+        <div class="container text-center">
+            <h2 class="welcome-text">Vítejte v aplikaci INSURANCE od ITS</h2>
+            <a href="/insured-persons" class="btn btn-primary btn-lg mt-3">vstup do aplikace</a>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JavaScript -->
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

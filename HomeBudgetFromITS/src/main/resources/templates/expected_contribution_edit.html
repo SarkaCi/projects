@@ -1,0 +1,98 @@
+<!--expected_contribution_edit.html-->
+
+<!DOCTYPE html>
+<html lang="cs" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Editace Očekávaných Příspěvků</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+<!-- Modální okno -->
+<div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-xl font-semibold mb-4">💰 Editace Očekávaných Příspěvků</h2>
+
+        <!-- Formulář pro přidání nové položky -->
+        <form id="expectedContributionForm">
+            <input type="hidden" id="expectedContributionExpenseId" name="expenseId" th:value="${expenseId}">
+            <input type="number" id="expectedContributionAmount" name="amount" placeholder="Částka" required class="border p-2 w-full">
+            <button type="button" onclick="addExpectedContribution()" class="bg-blue-600 text-white px-4 py-2 rounded mt-4">➕ Přidat</button>
+        </form>
+
+
+        <hr class="my-4">
+
+        <!-- Seznam příspěvků -->
+        <h3 class="text-lg font-semibold">📋 Seznam příspěvků</h3>
+        <table class="table-auto w-full border-collapse border">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Částka</th>
+                <th>🗑️</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="entry : ${expectedContributions}">
+                <td th:text="${entry.itemNumber}"></td>
+                <td th:text="${entry.amount}"></td>
+                <td>
+                    <button th:attr="data-entry-id=${entry.id}, data-expense-id=${expenseId}"
+                            onclick="removeExpectedContribution(this)"
+                            class="bg-red-600 text-white px-3 py-1 rounded">🗑️ Odebrat
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <button onclick="closeModal()" class="mt-4 bg-gray-500 text-white px-4 py-2 rounded w-full">Zavřít</button>
+    </div>
+</div>
+
+<script>
+    function addExpectedContribution() {
+        let expenseId = document.getElementById("expectedContributionExpenseId").value;
+        let amount = document.getElementById("expectedContributionAmount").value;
+
+        fetch("/expenses/expected_contribution/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `expenseId=${expenseId}&amount=${amount}`
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.reload(); // ✅ Opraveno, místo přepsání celé stránky se jen znovu načte
+                } else {
+                    alert("Chyba při přidávání příspěvku.");
+                }
+            });
+    }
+
+
+    function removeExpectedContribution(button) {
+        let entryId = button.getAttribute("data-entry-id");
+        let expenseId = button.getAttribute("data-expense-id");
+
+        fetch("/expenses/expected_contribution/remove", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `entryId=${entryId}&expenseId=${expenseId}`
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.reload(); // ✅ Zůstane v modálním okně a obnoví seznam
+                } else {
+                    alert("Chyba při odebírání příspěvku.");
+                }
+            });
+    }
+
+    function closeModal() {
+        window.history.back();
+    }
+</script>
+
+</body>
+</html>

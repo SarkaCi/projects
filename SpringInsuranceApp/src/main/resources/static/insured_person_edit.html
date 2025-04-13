@@ -1,0 +1,119 @@
+<!--insured_person_edit.html-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editace pojištěného</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+</head>
+<body>
+
+<!-- Importovaný Navbar -->
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<!-- Hlavní obsah -->
+<div class="container mt-4">
+    <h2>Editace pojištěného</h2>
+
+    <form th:action="@{/insured-persons/edit}" method="post" th:object="${insuredPerson}">
+        <!-- ✅ Adresa -->
+        <h4 class="mt-4">Osobní údaje</h4>
+        <input type="hidden" th:if="*{id}" th:field="*{id}">
+
+        <div class="mb-3">
+            <label for="firstName" class="form-label">Jméno</label>
+            <input type="text" id="firstName" class="form-control" th:field="*{firstName}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="lastName" class="form-label">Příjmení</label>
+            <input type="text" id="lastName" class="form-control" th:field="*{lastName}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Datum narození</label>
+            <div id="dob-display">
+                <span id="dob-text" th:text="${insuredPerson.dateOfBirth}"></span>
+                <button type="button" class="btn btn-sm btn-primary" onclick="enableDateEdit()">Editovat</button>
+            </div>
+
+            <!-- Pole pro zadání data narození (skryté, dokud se neklikne na editaci) -->
+            <input type="date" id="dob-input" class="form-control" th:field="*{dateOfBirth}" style="display:none;">
+
+            <!-- Skrytý input pro udržení hodnoty -->
+            <input type="hidden" id="dob-hidden" name="dateOfBirth" th:value="${insuredPerson.dateOfBirth}">
+        </div>
+
+        <script>
+            function enableDateEdit() {
+                document.getElementById("dob-display").style.display = "none"; // Skryje zobrazený text
+                document.getElementById("dob-input").style.display = "block"; // Zobrazí input pole
+                document.getElementById("dob-input").value = document.getElementById("dob-hidden").value; // Nastaví původní hodnotu
+            }
+
+            // Při odesílání formuláře zajistí, že `dateOfBirth` se vždy pošle
+            document.querySelector("form").addEventListener("submit", function () {
+                let dobInput = document.getElementById("dob-input");
+                let dobHidden = document.getElementById("dob-hidden");
+
+                if (dobInput.style.display === "block") {
+                    dobHidden.value = dobInput.value; // Pokud bylo editováno, uloží novou hodnotu
+                }
+            });
+        </script>
+
+
+
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" class="form-control" th:field="*{email}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="phone" class="form-label">Telefon</label>
+            <input type="text" id="phone" class="form-control" th:field="*{phone}" required>
+        </div>
+
+        <!-- ✅ Adresa -->
+        <h4 class="mt-4">Adresa</h4>
+
+        <div class="mb-3">
+            <label for="street" class="form-label">Ulice</label>
+            <input type="text" id="street" class="form-control" th:field="*{address.street}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="streetNumber" class="form-label">Číslo popisné/místní</label>
+            <input type="text" id="streetNumber" class="form-control" th:field="*{address.streetNumber}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="city" class="form-label">Město</label>
+            <input type="text" id="city" class="form-control" th:field="*{address.city}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="postalCode" class="form-label">PSČ</label>
+            <input type="text" id="postalCode" class="form-control" th:field="*{address.postalCode}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="country" class="form-label">Stát</label>
+            <input type="text" id="country" class="form-control" th:field="*{address.country}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Uložit změny</button>
+        <a th:href="@{/insured-persons/{id}(id=${insuredPerson.id})}" class="btn btn-secondary">Zrušit</a>
+    </form>
+</div>
+
+<!-- Bootstrap JavaScript -->
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

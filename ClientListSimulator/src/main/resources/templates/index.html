@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact channel</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #e0ffe0;
+        }
+        /* Nový styl pro zarovnání textu v novém sloupci */
+        .message-preview {
+            text-align: center;
+            margin-left: 50px;
+        }
+    </style>
+</head>
+<body>
+<div class="m-2">
+    <div class="container-fluid text-center">
+        <h1>Contact channel</h1>
+    </div>
+    <div class="container-fluid text-center">
+        <a href="/" id="back-link" class="btn btn-success mt-3" style="display: none;">Back to List</a>
+    </div>
+    <div class="container">
+        <div class="row">
+            <!-- Prázdný řádek mezi nadpisy -->
+            <div class="col-sm-12">
+                <br>
+            </div>
+            <div class="col-sm-6">
+                <h2>E-mails</h2>
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="email-query" name="email-query"
+                                   placeholder="Search e-mail">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="button" class="btn btn-success" id="search-email-button">Search E-mail</button>
+                    </div>
+                </div>
+                <ul class="list-group" id="email-list">
+                    <li th:each="email, i : ${emails}" class="list-group-item">
+                        <span th:text="${email}"></span>
+                        <!-- Zobrazení celého těla emailu -->
+                        <div class="email-body" th:text="${emailBodies[i.index]}"></div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-6">
+                <h2>SMS</h2>
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="sms-query" name="sms-query"
+                                   placeholder="Search SMS">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="button" class="btn btn-success" id="search-sms-button">Search SMS</button>
+                    </div>
+                </div>
+                <ul class="list-group" id="sms-list">
+                    <li th:each="sms, i : ${smss}" class="list-group-item">
+                        <span th:text="${sms}"></span>
+                        <!-- Zobrazení celého těla SMS -->
+                        <div class="sms-body" th:text="${smsBodies[i.index]}"></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Zobrazit tělo e-mailu a SMS po načtení stránky
+    document.querySelectorAll('.email-body').forEach(item => {
+        item.style.display = 'block';
+    });
+
+    document.querySelectorAll('.sms-body').forEach(item => {
+        item.style.display = 'block';
+    });
+
+    // Funkce pro vyhledávání e-mailů a SMS
+    function searchItems(query, itemList) {
+        let items = document.querySelectorAll(itemList);
+        items.forEach(function (item) {
+            let itemText = item.textContent.toLowerCase();
+            if (itemText.includes(query)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        document.getElementById('back-link').style.display = 'inline-block';
+    }
+
+    // Událost pro vyhledávání e-mailů
+    document.getElementById('search-email-button').addEventListener('click', function () {
+        let emailQuery = document.getElementById('email-query').value.toLowerCase();
+        searchItems(emailQuery, '#email-list li');
+    });
+
+    // Událost pro vyhledávání SMS
+    document.getElementById('search-sms-button').addEventListener('click', function () {
+        let smsQuery = document.getElementById('sms-query').value.toLowerCase();
+        searchItems(smsQuery, '#sms-list li');
+    });
+
+</script>
+</body>
+</html>

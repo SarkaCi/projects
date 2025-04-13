@@ -1,0 +1,68 @@
+
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(0.625rem + 2vmin);
+  color: white;
+  border-radius: 0.5rem;
+}
+
+.App-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgb(40, 44, 52);
+  padding: 0.5rem;
+  margin: 1rem 0;
+  border-radius: 12px;
+  background-color: #9870e7;
+}
+
+.buttonApp {
+  display: flex;
+  padding: 0.5rem 1rem;
+  font-size: calc(0.625rem + 2vmin);
+  font-weight: normal;
+  text-align: center;
+  text-decoration: none;
+  background-color: #282c34;
+  color: #9870e7;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.buttonApp:hover {
+  background-color: #9870e7;
+  color: #282c34;
+  box-shadow: 0 4px 10px rgb(40, 44, 52);
+  font-weight: bolder;
+}
+
+/* New large button styling */
+.largeButton {
+  transform: scale(2); /* Makes the button 3x larger */
+  margin-top: 2rem; /* Adds space below the "You are good" text */
+  transition: transform 0.2s ease-in-out;
+  background-color: #9870e7;
+  color: #282c34;
+  box-shadow: 0 4px 10px rgb(40, 44, 52);
+}
+
+.gameOver {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 2rem; /* Ensure there's space between the last text and the button */
+}

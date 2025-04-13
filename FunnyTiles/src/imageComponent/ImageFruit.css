@@ -1,0 +1,15 @@
+.image-container {
+    max-width: 100%;
+    height: auto;
+    display: grid;
+    position: relative;
+    left: 25%;
+    margin-top: -1%;
+}
+
+.image-smaller {
+    width: 45%; /* Adjust this width as needed */
+    height: auto;
+    border-radius: 1.5rem; /* Increase the value for more rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for depth */
+}

@@ -1,0 +1,89 @@
+<!--insured_person_detail.html-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail pojištěné osoby</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/styles.css}"> <!-- Odkaz na styles.css -->
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-5">
+    <h2>Detail pojištěné osoby</h2>
+
+    <!-- Osobní údaje -->
+    <div class="info-card">
+        <h3>Osobní údaje</h3>
+        <p><strong>Jméno:</strong> <span th:text="${insuredPerson.firstName}"></span> <span th:text="${insuredPerson.lastName}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${insuredPerson.email}"></span></p>
+        <p><strong>Telefon:</strong> <span th:text="${insuredPerson.phone}"></span></p>
+        <p><strong>Datum narození:</strong> <span th:text="${insuredPerson.dateOfBirth}"></span></p>
+    </div>
+
+    <!-- Adresa -->
+    <div class="info-card">
+        <h3>Adresa</h3>
+        <p><strong>Ulice:</strong>
+            <span th:if="${insuredPerson.address != null}" th:text="${insuredPerson.address.street}"></span>
+            <span th:unless="${insuredPerson.address != null}">Žádná adresa</span>
+        </p>
+        <p><strong>Město:</strong> <span th:text="${insuredPerson.address.city}"></span></p>
+        <p><strong>PSČ:</strong> <span th:text="${insuredPerson.address.postalCode}"></span></p>
+        <p><strong>Stát:</strong> <span th:text="${insuredPerson.address.country}"></span></p>
+    </div>
+
+    <!-- Editace osoby -->
+    <div class="mb-3 text-center">
+        <a th:href="@{/insured-persons/edit/{id}(id=${insuredPerson.id})}" class="btn btn-warning btn-lg btn-custom">Editovat údaje osoby</a>
+    </div>
+
+    <!-- Pojištění -->
+    <div class="info-card">
+        <h3>Pojištění</h3>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Číslo pojistky</th>
+                <th>Typ</th>
+                <th>Částka</th>
+                <th>Platnost od</th>
+                <th>Platnost do</th>
+                <th>Akce</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="insurance : ${insurances}">
+                <td th:text="${insurance.policyNumber}"></td>
+                <td th:text="${insurance.type}"></td>
+                <td th:text="${insurance.amount} + ' Kč'"></td>
+                <td th:text="${insurance.validFrom}"></td>
+                <td th:text="${insurance.validTo}"></td>
+                <td>
+                    <a th:href="@{/insurances/edit/{id}(id=${insurance.id})}" class="btn btn-primary btn-sm">Editovat</a>
+                    <form th:action="@{/insurances/delete/{id}(id=${insurance.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger btn-custom">Smazat</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Tlačítko pro vytvoření nového pojištění -->
+    <div class="mb-3 text-center">
+        <a th:href="@{/insurances/create}" class="btn btn-success btn-lg btn-custom">Vytvořit pojištění</a>
+    </div>
+
+    <!-- Tlačítko pro návrat -->
+    <div class="text-center mt-4">
+        <a th:href="@{/insured-persons}" class="btn btn-secondary btn-lg btn-custom">Zpět na seznam</a>
+    </div>
+</div>
+
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

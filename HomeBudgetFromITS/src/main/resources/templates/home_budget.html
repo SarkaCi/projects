@@ -1,0 +1,304 @@
+<!--home_budget.html-->
+
+<!DOCTYPE html>
+<html lang="cs" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home Budget</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+<!-- Navigace -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mx-auto p-6">
+    <div class="bg-white shadow-lg rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">📊 Celkové náklady za měsíc</h2>
+
+        <!-- Filtr pro načtení dat podle roku a měsíce -->
+        <form action="/expenses/filter" method="get" class="flex gap-4 items-end">
+            <div class="flex flex-col">
+                <label for="year" class="block font-medium">📅 Rok</label>
+                <input type="number" id="year" name="year" placeholder="Rok" required class="border p-2 w-24 h-10">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="month" class="block font-medium">📅 Měsíc</label>
+                <input type="number" id="month" name="month" placeholder="Měsíc" required class="border p-2 w-24 h-10">
+            </div>
+
+            <!-- Zarovnané tlačítko -->
+            <button type="submit" class="px-4 py-2 rounded-md transition-all duration-300 border border-blue-600 text-white bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 hover:bg-blue-400 hover:bg-none hover:text-white">
+                🔍 Zobrazit
+            </button>
+        </form>
+
+        <!-- Zobrazení aktuálního filtru -->
+        <div th:if="${year != null and month != null}" class="mt-4 p-2 bg-gray-100 text-lg font-semibold">
+            📅 Zobrazeno pro: <span th:text="${year}"></span>/<span th:text="${month}"></span>
+        </div>
+
+        <!-- Tabulka pro zobrazení dat -->
+        <table class="table-auto w-full border-collapse border mt-4 text-left">
+            <thead>
+            <tr>
+                <th><i class="fas fa-user"></i> Uživatel</th>
+                <th><i class="fas fa-calculator"></i> Celkem zaplatil</th>
+                <th><i class="fas fa-piggy-bank"></i> Měsíční fond</th>
+                <th><i class="fas fa-balance-scale"></i> Rozdíl</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="expense : ${expenses}">
+                <td th:text="${expense.user}"></td>
+                <td th:text="${expense.getTotalSum()}"></td>
+                <td>
+                    <a th:href="@{/expenses/expected_contribution/edit/{id}(id=${expense.id})}"
+                       class="text-blue-500 cursor-pointer">💰 <span th:text="${expense.getExpectedContributionSum()}"></span>
+                    </a>
+                </td>
+                <td th:text="${expense.balanceStatus != null ? expense.balanceStatus : 'Neznámý stav'}"
+                    th:classappend="${expense.balanceStatus != null and expense.balanceStatus == '✅ Vyrovnáno'} ? 'text-blue-500'
+        : (${expense.balanceStatus != null and expense.balanceStatus.contains('Dostane zpět')} ? 'text-green-500'
+        : (${expense.balanceStatus != null and expense.balanceStatus.contains('Musí zaplatit')} ? 'text-red-500' : ''))">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Přidání nového uživatele -->
+    <div class="bg-white shadow-lg rounded-lg p-6 mt-6">
+        <h2 class="text-xl font-semibold mb-4">➕ Přidat uživatele</h2>
+        <form action="/expenses/addUser" method="post" class="flex flex-wrap gap-4">
+            <input type="text" name="user" placeholder="Jméno uživatele" required class="border p-2 w-full md:w-auto">
+            <input type="number" name="year" placeholder="Rok" required class="border p-2 w-full md:w-auto">
+            <input type="number" name="month" placeholder="Měsíc" required class="border p-2 w-full md:w-auto">
+            <button type="submit" class="px-4 py-2 rounded-md transition-all duration-300 border border-yellow-500 text-yellow-500 bg-gradient-to-r from-green-900 via-green-800 to-green-700 hover:bg-yellow-500 hover:bg-none hover:text-white">Přidat uživatele</button>
+        </form>
+    </div>
+
+
+    <!-- Místo pro graf -->
+    <div class="bg-white shadow-lg rounded-lg p-6 mt-6">
+        <h2 class="text-xl font-semibold mb-4">📊 Filtrování výdajů</h2>
+        <canvas id="expenseChart"></canvas>
+    </div>
+
+    <!-- Formulář pro filtrování -->
+    <form id="filterForm" class="bg-white shadow-lg rounded-lg p-6 mt-4">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <!-- Filtrování podle uživatele -->
+            <div class="flex flex-col">
+                <label for="userFilter" class="block font-medium">👤 Uživatel:</label>
+                <select id="userFilter" name="userFilter" class="border p-2 rounded-md w-full">
+                    <option value="all">Všichni</option>
+                </select>
+            </div>
+
+            <!-- Filtr pro období -->
+            <div class="flex flex-col">
+                <label for="startYear" class="block font-medium">📅 Od roku:</label>
+                <input type="number" id="startYear" name="startYear" min="2000" placeholder="Rok" class="border p-2 rounded-md w-full" required>
+            </div>
+            <div class="flex flex-col">
+                <label for="startMonth" class="block font-medium">📆 Od měsíce:</label>
+                <input type="number" id="startMonth" name="startMonth" min="1" max="12" placeholder="Měsíc" class="border p-2 rounded-md w-full" required>
+            </div>
+            <div class="flex flex-col">
+                <label for="endYear" class="block font-medium">📅 Do roku:</label>
+                <input type="number" id="endYear" name="endYear" min="2000" placeholder="Rok" class="border p-2 rounded-md w-full" required>
+            </div>
+            <div class="flex flex-col">
+                <label for="endMonth" class="block font-medium">📆 Do měsíce:</label>
+                <input type="number" id="endMonth" name="endMonth" min="1" max="12" placeholder="Měsíc" class="border p-2 rounded-md w-full" required>
+            </div>
+        </div>
+
+        <!-- Filtr pro kategorie -->
+        <div class="mt-4">
+            <label class="block font-medium mb-2">📊 Kategorie:</label>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" class="category-filter" value="electricity" checked>
+                    <span>Elektřina</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" class="category-filter" value="gas" checked>
+                    <span>Plyn</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" class="category-filter" value="rental" checked>
+                    <span>Nájem</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" class="category-filter" value="car" checked>
+                    <span>Auto</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" class="category-filter" value="petrol" checked>
+                    <span>Benzín</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" class="category-filter" value="internet" checked>
+                    <span>Internet</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" class="category-filter" value="lunch" checked>
+                    <span>Lunch</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" class="category-filter" value="shoppingInStore" checked>
+                    <span>Shop</span>
+                </label>
+               <!-- <label class="flex items-center space-x-2">
+                    <input type="checkbox" class="category-filter" value="totalSum" checked>
+                    <span>Celkem</span>
+                </label>-->
+            </div>
+        </div>
+
+        <!-- Tlačítko pro zobrazení grafu -->
+        <div class="mt-6 flex justify-center">
+            <button type="submit" class="px-4 py-2 rounded-md transition-all duration-300 border border-blue-600 text-white bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 hover:bg-blue-400 hover:bg-none hover:text-white">
+                🔍 Zobrazit graf
+            </button>
+
+        </div>
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Načtení uživatelů do select boxu
+            fetch("/api/expenses/all-users")
+                .then(response => response.json())
+                .then(users => {
+                    let userFilter = document.getElementById("userFilter");
+                    let allOption = document.createElement("option");
+                    allOption.value = "all";
+                    allOption.textContent = "Všichni";
+                    userFilter.appendChild(allOption);
+
+                    users.forEach(user => {
+                        let option = document.createElement("option");
+                        option.value = user;
+                        option.textContent = user;
+                        userFilter.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("❌ Chyba při načítání uživatelů:", error));
+
+            document.getElementById('filterForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const startYear = document.getElementById('startYear').value;
+                const startMonth = document.getElementById('startMonth').value;
+                const endYear = document.getElementById('endYear').value;
+                const endMonth = document.getElementById('endMonth').value;
+                const user = document.getElementById('userFilter').value;
+                const selectedCategories = Array.from(document.querySelectorAll('.category-filter:checked'))
+                    .map(checkbox => checkbox.value);
+
+                fetch(`/api/expenses/between-dates?startYear=${startYear}&startMonth=${startMonth}&endYear=${endYear}&endMonth=${endMonth}&user=${user}&categories=${selectedCategories.join(",")}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        renderChart(data, selectedCategories, user);
+                    })
+                    .catch(error => {
+                        console.error('❌ Chyba při získávání dat:', error);
+                        alert('Chyba při získávání dat. Podívej se do konzole.');
+                    });
+            });
+        });
+
+        let chartInstance;
+        function renderChart(data, selectedCategories, selectedUser) {
+            // Získání unikátních hodnot pro osu X (rok-měsíc)
+            const labels = [...new Set(data.map(item => `${item.year}-${item.month}`))];
+
+            const categoryColors = {
+                electricity: 'rgba(255, 99, 132, 1)',
+                gas: 'rgba(54, 162, 235, 1)',
+                rental: 'rgba(75, 192, 192, 1)',
+                car: 'rgba(255, 206, 86, 1)',
+                petrol: 'rgba(153, 102, 255, 1)',
+                internet: 'rgba(255, 159, 64, 1)',
+                lunch: 'rgba(255, 115, 46, 1)',
+                shoppingInStore: 'rgba(0, 128, 0, 1)',
+                totalSum: 'rgba(0, 0, 0, 1)'
+            };
+
+            const userStyles = [
+                { borderDash: [] },       // Plná čára
+                { borderDash: [5, 5] },   // Přerušovaná
+                { borderDash: [10, 5] },  // Delší mezery
+                { borderDash: [2, 5] },   // Krátké mezery
+                { borderDash: [0, 0] }    // Pevná čára (pro jistotu)
+            ];
+
+            const datasets = [];
+            if (selectedUser === "all") {
+                const users = [...new Set(data.map(item => item.user))]; // Získání unikátních uživatelů
+
+                users.forEach((user, index) => {
+                    selectedCategories.forEach(category => {
+                        datasets.push({
+                            label: `${user} - ${category.charAt(0).toUpperCase() + category.slice(1)}`,
+                            data: labels.map(label => {
+                                const expense = data.find(item => `${item.year}-${item.month}` === label && item.user === user);
+                                return expense ? expense[category] : 0;
+                            }),
+                            borderColor: categoryColors[category] || 'rgba(100, 100, 100, 1)', // Barva dle kategorie
+                            borderDash: userStyles[index % userStyles.length].borderDash, // Odlišení uživatele
+                            fill: false
+                        });
+                    });
+                });
+            } else {
+                selectedCategories.forEach(category => {
+                    datasets.push({
+                        label: category.charAt(0).toUpperCase() + category.slice(1),
+                        data: labels.map(label => {
+                            const expense = data.find(item => `${item.year}-${item.month}` === label);
+                            return expense ? expense[category] : 0;
+                        }),
+                        borderColor: categoryColors[category] || 'rgba(100, 100, 100, 1)',
+                        fill: false
+                    });
+                });
+            }
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            const ctx = document.getElementById('expenseChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Období' },
+                            ticks: { autoSkip: true, maxTicksLimit: labels.length }
+                        },
+                        y: {
+                            title: { display: true, text: 'Cena (Kč)' }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+
+</div>
+</body>
+</html>

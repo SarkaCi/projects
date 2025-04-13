@@ -1,0 +1,77 @@
+
+import React, {useEffect, useState} from "react"
+
+
+interface Data {
+img:[
+{
+"image": "apple.jpg",
+"gameValues": ["apple", "banana", "cherry", "lemon", "orange", "plum", "watermelon"],
+"correctValue": "apple",
+},
+{
+"image":"banana.jpg",
+"gameValues": ["apple", "banana", "cherry", "lemon", "orange", "plum", "watermelon"],
+"correctValue": "banana",
+},
+{
+"image":"cherry.jpg",
+"gameValues": ["apple", "banana", "cherry", "lemon", "orange", "plum", "watermelon"],
+"correctValue": "cherry",
+},
+{
+"image":"lemon.jpg",
+"gameValues": ["apple", "banana", "cherry", "lemon", "orange", "plum", "watermelon"],
+"correctValue": "lemon",
+},
+{
+"image":"orange.jpg",
+"gameValues": ["apple", "banana", "cherry", "lemon", "orange", "plum", "watermelon"],
+"correctValue": "orange",
+},
+{
+"image":"plum.jpg",
+"gameValues": ["apple", "banana", "cherry", "lemon", "orange", "plum", "watermelon"],
+"correctValue": "plum",
+},
+{
+"image":"watermelon.jpg",
+"gameValues": ["apple", "banana", "cherry", "lemon", "orange", "plum", "watermelon"],
+"correctValue": "watermelon",
+},
+]
+}
+export const UsersDetails = () =>{
+const [data, setData] = useState<Data>()
+const fetchJson = () => {
+fetch('./data.json')
+.then(response => {
+return response.json(),
+}).then(data => {
+setData(data),
+}).catch((e: Error) => {
+console.log(e.message),
+}),
+}
+useEffect(() => {
+fetchJson()
+},[])
+return(
+<>
+<div>
+<div><label>Img: </label>
+<select>
+{
+data.img.map((img) => {
+return <option key={img.image} value={img.image
+}>{
+img.gameValues
+}</option>
+})
+}
+</select>
+</div>
+</div>
+</>
+)
+}

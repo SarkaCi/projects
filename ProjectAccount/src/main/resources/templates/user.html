@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Users</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div class="container-fluid text-center">
+    <div><h2>Manage Users</h2></div>
+        <div class="m-2">
+        <a class="h8" th:href="@{/account}">Back to Manage Account</a>
+    </div>
+
+    <div th:if="${message}" class="alert alert-success">
+        [[${message}]]
+    </div>
+
+    <div>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th>User ID</th>
+                <th>Account ID</th>
+                <th>User Name</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>E-mail</th>
+                <th>Street</th>
+                <th>Building Number</th>
+                <th>City</th>
+                <th>Post Number</th>
+                <th>Country</th>
+                <th>Enabled</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="user : ${listUser}">
+                <tr>
+                    <td>[[${user.id}]]</td>
+                    <td>[[${user.account.id}]]</td>
+                    <td>[[${user.userName}]]</td>
+                    <td>[[${user.firstName}]]</td>
+                    <td>[[${user.lastName}]]</td>
+                    <td>[[${user.email}]]</td>
+                    <td>[[${user.userAddress.street}]]</td>
+                    <td>[[${user.userAddress.buildingNumber}]]</td>
+                    <td>[[${user.userAddress.city}]]</td>
+                    <td>[[${user.userAddress.postNumber}]]</td>
+                    <td>[[${user.userAddress.country}]]</td>
+                    <td>[[${user.enabled}]]</td>
+                    <td>
+                        <a class="h8" th:href="@{'/user/show/' + ${user.id}}"></a>
+                        <a class="h8" th:href="@{/user/edit(accountId=${user.id})}">Edit</a>
+                    </td>
+                    <td>
+                        <a class="h8" th:href="@{'/user/delete/' + ${user.id}}">Delete</a>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

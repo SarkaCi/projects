@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Accounts</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div class="container-fluid text-center">
+    <div><h2>Manage Accounts</h2></div>
+    <a class="h8" th:href="@{/}">Back to Account System</a>
+    <div class="m-2">
+        <a class="h3 mr-5" th:href="@{/account/new}">Add New Account</a>
+        <a class="h3 mr-5" th:href="@{/user}">All Users</a>
+
+    </div>
+
+    <div th:if="${message}" class="alert alert-success">
+        [[${message}]]
+    </div>
+
+    <div>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th>Account ID</th>
+                <th>Account Type</th>
+                <th>Account Status</th>
+                <th>Date Created</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="account : ${listAccount}">
+                <tr>
+                    <td>[[${account.id}]]</td>
+                    <td>[[${account.accountType}]]</td>
+                    <td>[[${account.accountStatus}]]</td>
+                    <td>[[${account.dateCreated}]]</td>
+                    <td>
+                        <a class="h6" th:href="@{/user/new(accountId=${account.id})}">Add New User</a>
+                    </td>
+                    <td>
+                        <a class="h6" th:href="@{/user/show(accountId=${account.id})}">Users</a>
+                    </td>
+                    <td>
+                        <a class="h8" th:href="@{'/account/edit/' + ${account.id}}">Edit</a>
+                    </td>
+                    <td>
+                        <a class="h8" th:href="@{'/account/delete/' + ${account.id}}">Delete</a>
+                    </td>
+
+                </tr>
+            </th:block>
+
+
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

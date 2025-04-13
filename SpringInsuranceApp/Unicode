@@ -1,0 +1,12 @@
+Nejužitečnější Unicode symboly pro aplikace
+Symbol	Unicode	Popis
+✅	\u2705	Úspěch, potvrzení
+❌	\u274C	Chyba, neplatná akce
+⚠️	\u26A0	Varování
+🔎	\u1F50E	Hledání
+🔄	\u1F504	Aktualizace, změna
+📌	\u1F4CC	Důležitá poznámka
+✍	\u270D	Úprava, editace
+📝	\u1F4DD	Poznámka, text
+💡 Pokud chceš zjistit Unicode kód nějakého znaku, můžeš použít online nástroj jako:
+🔗 Unicode Table nebo Emojipedia.

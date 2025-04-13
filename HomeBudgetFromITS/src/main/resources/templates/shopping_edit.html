@@ -1,0 +1,96 @@
+<!--shopping_edit.html-->
+
+<!DOCTYPE html>
+<html lang="cs" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Editace Shopping položek</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+<!-- Modální okno -->
+<div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-xl font-semibold mb-4">🛒 Editace Shopping položek</h2>
+
+        <!-- Formulář pro přidání nové položky -->
+        <form id="shoppingForm">
+            <input type="hidden" id="shoppingExpenseId" name="expenseId" th:value="${expenseId}">
+            <input type="number" id="shoppingAmount" name="amount" placeholder="Částka" required class="border p-2 w-full">
+            <button type="button" onclick="addShoppingEntry()" class="bg-blue-600 text-white px-4 py-2 rounded mt-4">➕ Přidat</button>
+        </form>
+
+        <hr class="my-4">
+
+        <!-- Seznam položek -->
+        <h3 class="text-lg font-semibold">📋 Seznam položek</h3>
+        <table class="table-auto w-full border-collapse border">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Částka</th>
+                <th>🗑️</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="entry : ${shoppingEntries}">
+                <td th:text="${entry.itemNumber}"></td>
+                <td th:text="${entry.amount}"></td>
+                <td>
+                    <button th:attr="data-entry-id=${entry.id}, data-expense-id=${expenseId}"
+                            onclick="removeShoppingEntry(this)"
+                            class="bg-red-600 text-white px-3 py-1 rounded">🗑️ Odebrat
+                    </button>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+
+        <button onclick="closeModal()" class="mt-4 bg-gray-500 text-white px-4 py-2 rounded w-full">Zavřít</button>
+    </div>
+</div>
+
+<script>
+    function addShoppingEntry() {
+        let expenseId = document.getElementById("shoppingExpenseId").value;
+        let amount = document.getElementById("shoppingAmount").value;
+
+        fetch("/expenses/shopping/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `expenseId=${expenseId}&amount=${amount}`
+        })
+            .then(response => response.text())
+            .then(html => {
+                document.body.innerHTML = html; // ✅ Aktualizace obsahu modal okna
+            })
+            .catch(error => alert("Chyba při přidávání položky."));
+    }
+
+    function removeShoppingEntry(button) {
+        let entryId = button.getAttribute("data-entry-id");
+        let expenseId = button.getAttribute("data-expense-id");
+
+        fetch("/expenses/shopping/remove", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `entryId=${entryId}&expenseId=${expenseId}`
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.reload(); // ✅ Zůstane v modálním okně a obnoví seznam
+                } else {
+                    alert("Chyba při odebírání položky.");
+                }
+            });
+    }
+
+
+    function closeModal() {
+        window.history.back();
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!--insurances.html-->
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Seznam pojištění</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+</head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between">
+        <h2>Seznam pojištění</h2>
+        <a href="/insurances/create" class="btn btn-success">Přidat pojištění</a>
+    </div>
+
+    <table class="table table-striped mt-3">
+        <thead>
+        <tr>
+            <th>Číslo pojistky</th>
+            <th>Typ</th>
+            <th>Částka Kč</th>
+            <th>Akce</th>
+        </tr>
+        </thead>
+        <tbody id="insurance-list">
+        <!-- Dynamicky se sem vloží řádky -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        loadInsurances();
+    });
+
+    function loadInsurances() {
+        fetch("/api/insurances")
+            .then(response => {
+                if (!response.ok) throw new Error("Chyba při načítání pojištění");
+                return response.json();
+            })
+            .then(insurances => {
+                const tbody = document.getElementById("insurance-list");
+                tbody.innerHTML = ""; // Vyčištění obsahu
+
+                insurances.forEach(insurance => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                    <td>${insurance.policyNumber}</td>
+                    <td>${insurance.type}</td>
+                    <td>${insurance.amount}</td>
+                    <td>
+<a href="/insurance_edit.html?id=" + insurance.id class="btn btn-warning btn-sm">Editovat</a>
+
+                        <button onclick="deleteInsurance(${insurance.id})" class="btn btn-danger btn-sm">Smazat</button>
+                    </td>
+                `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => console.error("Chyba při načítání dat:", error));
+    }
+
+    function deleteInsurance(id) {
+        if (!confirm("Opravdu chcete smazat toto pojištění?")) return;
+
+        fetch(`/api/insurances/${id}`, {
+            method: "DELETE"
+        }).then(response => {
+            if (response.ok) {
+                loadInsurances(); // Aktualizace seznamu
+            } else {
+                alert("Nelze smazat pojištění.");
+            }
+        }).catch(error => console.error("Chyba při mazání:", error));
+    }
+</script>
+
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

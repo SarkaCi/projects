@@ -1,0 +1,27 @@
+.button {
+  display: grid;
+  padding: 0.5rem 1rem; /* namísto padding: 8px 16px; */
+  font-size: calc(0.625rem + 2vmin); /* namísto font-size: calc(10px + 2vmin); */
+  font-weight: normal;
+  text-align: center;
+  text-decoration: none;
+  background-color: #282c34;
+  color: white;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  right: -70%; /* namísto left: -180px; */
+  margin-top: -11%; /* namísto bottom: 300px; */
+  margin-bottom: -12.8%;
+  border-radius: 1.5rem; /* Increase the value for more rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for depth */
+}
+
+.button:hover {
+  background-color: #9870e7;
+  color: #282c34;
+  font-weight: bolder;
+  border-radius: 1.5rem; /* Increase the value for more rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for depth */
+}
+

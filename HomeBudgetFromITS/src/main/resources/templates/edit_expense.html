@@ -1,0 +1,59 @@
+<!--edit_expense.html-->
+
+
+
+<!DOCTYPE html>
+<html lang="cs" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Editovat výdaje</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+<!-- Navigace -->
+<div th:replace="fragments/navbar :: navbar"></div>
+
+
+<div class="container mx-auto p-6">
+    <div class="bg-white shadow-lg rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">🛠 Upravit výdaje</h2>
+        <form action="/expenses/update" method="post" class="flex flex-col gap-4">
+            <input type="hidden" name="id" th:value="${expense.id}">
+
+            <label>👤 Uživatel</label>
+            <input type="text" name="user" th:value="${expense.user}" class="border p-2 w-full" readonly>
+
+            <label>📆 Rok</label>
+            <input type="number" name="year" th:value="${expense.year}" class="border p-2 w-full" readonly>
+
+            <label>📅 Měsíc</label>
+            <input type="number" name="month" th:value="${expense.month}" class="border p-2 w-full" readonly>
+
+            <label>⚡ Elektřina</label>
+            <input type="number" name="electricity" th:value="${expense.electricity}" class="border p-2 w-full">
+
+            <label>🔥 Plyn</label>
+            <input type="number" name="gas" th:value="${expense.gas}" class="border p-2 w-full">
+
+            <label>🏠 Nájem</label>
+            <input type="number" name="rental" th:value="${expense.rental}" class="border p-2 w-full">
+
+            <label>🚗 Auto</label>
+            <input type="number" name="car" th:value="${expense.car}" class="border p-2 w-full">
+
+            <label>⛽ Benzín</label>
+            <input type="number" name="petrol" th:value="${expense.petrol}" class="border p-2 w-full">
+
+            <label>🌍 Internet</label>
+            <input type="number" name="internet" th:value="${expense.internet}" class="border p-2 w-full">
+
+            <label>🥗 Lunch</label>
+            <input type="number" name="lunch" th:value="${expense.lunch}" class="border p-2 w-full">
+
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">💾 Uložit změny</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

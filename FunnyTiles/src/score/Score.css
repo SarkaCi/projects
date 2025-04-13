@@ -1,0 +1,26 @@
+.score {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* na místo grid-template-columns: repeat(5, 1fr); */
+    /*grid-template-rows: repeat(auto-fit, minmax(80px, 1fr)); // na místo grid-template-rows: repeat(5, 1fr); */
+    gap: 1rem; /* namísto gap: 5px; */
+    font-size: calc(0.625rem + 2vmin); /* na místo font-size: calc(10px + 2vmin); */
+    font-weight: bolder;
+    color: #282c34;
+
+
+}
+
+
+/*
+.score-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgb(40, 44, 52);
+    padding: 0.5rem;
+    margin: 1rem 0;
+    border-radius: 12px;
+    background-color: #9870e7;
+
+}
+*/
